@@ -55,6 +55,20 @@ public class Reptile {
     }
 
     /**
+     * 判断文章是原创还是转载
+     * @param div
+     * @return
+     */
+    static boolean getArticlType(Element div){
+        Elements span = div.select("span.ico_type_Repost");
+        if(span.size() == 0){
+            return false;
+        }else{
+            return true;
+        }
+    }
+
+    /**
      * 获取文章发布时间
      *
      * @param div
@@ -312,7 +326,7 @@ public class Reptile {
 
     public static void main(String[] args) throws Exception {
 
-        String nextHref = "/u283056051/article/details/54614665";
+        String nextHref = "/u283056051/article/details/39755229";
         while (nextHref != null){
             Element div = getContentElement(nextHref);
 
@@ -328,13 +342,14 @@ public class Reptile {
             okContent = handlSpecialChar(okContent);
 
             nextHref = getNextHref(div); //下一篇文章链接
-
+            if(getArticlType(div)){
+                title = "[转]" + title;
+            }
             create(title,date,okContent,"E:\\template.xml");
 
             System.out.println("************下载完成："+title+"************");
             System.out.println();
         }
-        //System.out.println(handlSpecialCharForTitle("sdf*sdf><d|\\/sdf:fg?hk\""));
 
     }
 
