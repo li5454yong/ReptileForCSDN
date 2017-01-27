@@ -278,9 +278,39 @@ public class Reptile {
      * @param templatePath
      * @throws Exception
      */
-    static void create(String title, String date, String okContent, String templatePath) throws Exception {
-        FileInputStream fileInputStream = new FileInputStream(templatePath);
-        BufferedReader reader = new BufferedReader(new InputStreamReader(fileInputStream, "utf-8"));
+    static void create(String title, String date, String okContent, String template) throws Exception {
+//        FileInputStream fileInputStream = new FileInputStream(templatePath);
+//        BufferedReader reader = new BufferedReader(new InputStreamReader(fileInputStream, "utf-8"));
+//        String line = reader.readLine(); // 读取第一行
+//        StringBuffer buffer = new StringBuffer();
+//        while (line != null) { // 如果 line 为空说明读完了
+//            buffer.append(line); // 将读到的内容添加到 buffer 中
+//            buffer.append("\n"); // 添加换行符
+//            line = reader.readLine(); // 读取下一行
+//        }
+//        reader.close();
+//        fileInputStream.close();
+//
+//        String str = new String(buffer.toString().getBytes("UTF-8"));
+
+        String page = replace(template, "title", title);
+        page = replace(page, "post_date", date);
+        page = replace(page, "content", okContent);
+
+
+        RandomAccessFile randomFile = null;
+        randomFile = new RandomAccessFile("E:\\test.xml", "rw");
+        randomFile.seek(randomFile.length()-18);
+        randomFile.write(("\n\t"+page+"</channel>\n</rss>").getBytes("UTF-8"));
+        randomFile.close();
+    }
+
+
+    static void create1() throws Exception{
+        InputStream is = Reptile.class.getClassLoader().getResourceAsStream("template1.xml");
+
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is, "utf-8"));
+
         String line = reader.readLine(); // 读取第一行
         StringBuffer buffer = new StringBuffer();
         while (line != null) { // 如果 line 为空说明读完了
@@ -289,23 +319,16 @@ public class Reptile {
             line = reader.readLine(); // 读取下一行
         }
         reader.close();
-        fileInputStream.close();
+        is.close();
 
         String str = new String(buffer.toString().getBytes("UTF-8"));
 
-        String page = replace(str, "title", title);
-        page = replace(page, "post_date", date);
-        page = replace(page, "content", okContent);
-
 
         RandomAccessFile randomFile = null;
-        randomFile = new RandomAccessFile("E:\\CSDN\\" + handlSpecialCharForTitle(title) + ".xml", "rw");
+        randomFile = new RandomAccessFile("E:\\test.xml", "rw");
         randomFile.seek(randomFile.length());
-        randomFile.write(page.getBytes("UTF-8"));
-
-        randomFile.close();
+        randomFile.write(str.getBytes("UTF-8"));
     }
-
     /**
      * 替换模板文件中的内容
      * @param str
@@ -327,6 +350,25 @@ public class Reptile {
     public static void main(String[] args) throws Exception {
 
         String nextHref = "/u283056051/article/details/39755229";
+
+        create1();
+
+        InputStream is = Reptile.class.getClassLoader().getResourceAsStream("template2.xml");
+
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is, "utf-8"));
+
+        String line = reader.readLine(); // 读取第一行
+        StringBuffer buffer = new StringBuffer();
+        while (line != null) { // 如果 line 为空说明读完了
+            buffer.append(line); // 将读到的内容添加到 buffer 中
+            buffer.append("\n\t"); // 添加换行符
+            line = reader.readLine(); // 读取下一行
+        }
+        reader.close();
+        is.close();
+
+        String str = new String(buffer.toString().getBytes("UTF-8"));
+
         while (nextHref != null){
             Element div = getContentElement(nextHref);
 
@@ -336,7 +378,6 @@ public class Reptile {
 
             String atricle = getAtricleContent(div);//正文内容
 
-            //System.out.println(atricle);
             String okContent = replaceRedundancyElement(atricle);
 
             okContent = handlSpecialChar(okContent);
@@ -345,7 +386,9 @@ public class Reptile {
             if(getArticlType(div)){
                 title = "[转]" + title;
             }
-            create(title,date,okContent,"E:\\template.xml");
+
+            String template = str;
+            create(title,date,okContent,str);
 
             System.out.println("************下载完成："+title+"************");
             System.out.println();
