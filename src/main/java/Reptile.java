@@ -275,23 +275,9 @@ public class Reptile {
      * @param title
      * @param date
      * @param okContent
-     * @param templatePath
      * @throws Exception
      */
     static void create(String title, String date, String okContent, String template) throws Exception {
-//        FileInputStream fileInputStream = new FileInputStream(templatePath);
-//        BufferedReader reader = new BufferedReader(new InputStreamReader(fileInputStream, "utf-8"));
-//        String line = reader.readLine(); // 读取第一行
-//        StringBuffer buffer = new StringBuffer();
-//        while (line != null) { // 如果 line 为空说明读完了
-//            buffer.append(line); // 将读到的内容添加到 buffer 中
-//            buffer.append("\n"); // 添加换行符
-//            line = reader.readLine(); // 读取下一行
-//        }
-//        reader.close();
-//        fileInputStream.close();
-//
-//        String str = new String(buffer.toString().getBytes("UTF-8"));
 
         String page = replace(template, "title", title);
         page = replace(page, "post_date", date);
